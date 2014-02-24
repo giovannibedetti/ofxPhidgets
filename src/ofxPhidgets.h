@@ -1,0 +1,1 @@
+int interfacekit_simple();
