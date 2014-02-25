@@ -35,8 +35,10 @@ public:
 	void update();
 	void exit();
 	~ofxPhidgetsStepper() { exit(); };
-	void setPosition(int);
-	int getPosition() const;
+	void setTargetPosition(int);
+	int getTargetPosition() const;
+	int getCurrentPosition() const;
+	bool isMoving() const;
 	
 private:
 	static int CCONV PositionChangeHandler(CPhidgetStepperHandle stepper, void *usrptr, int Index, __int64 Value);

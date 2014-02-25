@@ -111,14 +111,22 @@ void ofxPhidgetsStepper::update()
 	}
 }
 
-void ofxPhidgetsStepper::setPosition(int _target_pos)
+void ofxPhidgetsStepper::setTargetPosition(int _target_pos)
 {
 	target_pos = _target_pos;
 }
 
-int ofxPhidgetsStepper::getPosition() const {
+int ofxPhidgetsStepper::getTargetPosition() const {
 	return target_pos;
-};
+}
+
+int ofxPhidgetsStepper::getCurrentPosition() const {
+	return curr_pos;
+}
+
+bool ofxPhidgetsStepper::isMoving() const {
+	return curr_pos != target_pos;
+}
 
 void ofxPhidgetsStepper::exit()
 {
