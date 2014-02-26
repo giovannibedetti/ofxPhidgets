@@ -12,23 +12,9 @@
 
 #include "ofxPhidgets.h"
 
-// - Stepper simple -
-// This simple example sets up a Stepper object, hooks the event handlers and opens it for device connections.
-// Once an Advanced Servo is attached it will move the motor to various positions.
-//
-// Please note that this example was designed to work with only one Phidget Stepper connected.
-//
-// Copyright 2008 Phidgets Inc.  All rights reserved.
-// This work is licensed under the Creative Commons Attribution 2.5 Canada License.
-// view a copy of this license, visit http://creativecommons.org/licenses/by/2.5/ca/
-
-#include <stdio.h>
-#include <phidget21.h>
-//#include <unistd.h>
-
 int CCONV ofxPhidgetsStepper::PositionChangeHandler(CPhidgetStepperHandle stepper, void *usrptr, int Index, __int64 Value)
 {
-	printf("Motor: %d > Current Position: %lld\n", Index, Value);
+	ofLogVerbose() << "Motor: " << Index << " > Current Position: " << Value;
 	return 0;
 }
 

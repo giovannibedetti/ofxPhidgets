@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <phidget21.h>
 
+#include "ofMain.h"
+
 class ofxPhidgets {
 protected:
 	static int CCONV AttachHandler(CPhidgetHandle IFK, void *userptr);
