@@ -38,6 +38,8 @@ int ofxPhidgetsStepper::display_properties(CPhidgetStepperHandle phid)
 
 void ofxPhidgetsStepper::init()
 {
+	initialized = false;
+	
 	target_pos = 0;
 	
 	//create the stepper object
@@ -87,6 +89,8 @@ void ofxPhidgetsStepper::init()
 	
 	CPhidgetStepper_setCurrentPosition(stepper, 0, 0);
 	CPhidgetStepper_setEngaged(stepper, 0, 1);
+	
+	initialized = true;
 }
 
 void ofxPhidgetsStepper::update()
@@ -116,6 +120,8 @@ bool ofxPhidgetsStepper::isMoving() const {
 
 void ofxPhidgetsStepper::exit()
 {
+	if( !initialized ) return;
+	
 	CPhidgetStepper_setTargetPosition(stepper, 0, 0);
 	
 	stopped = PFALSE;
@@ -225,6 +231,8 @@ int ofxPhidgetsIfkit::display_properties(CPhidgetInterfaceKitHandle phid)
 
 void ofxPhidgetsIfkit::init()
 {
+	initialized = false;
+	
 	//create the InterfaceKit object
 	CPhidgetInterfaceKit_create(&ifKit);
 	
@@ -262,6 +270,8 @@ void ofxPhidgetsIfkit::init()
 	
 	//read interface kit event data
 	printf("Reading.....\n");
+	
+	initialized = true;
 }
 
 void ofxPhidgetsIfkit::update()
@@ -299,6 +309,8 @@ void ofxPhidgetsIfkit::update()
 
 void ofxPhidgetsIfkit::exit()
 {
+	if( !initialized ) return;
+	
 	//since user input has been read, this is a signal to terminate the program so we will close the phidget and delete the object we created
 	printf("Closing...\n");
 	CPhidget_close((CPhidgetHandle)ifKit);
