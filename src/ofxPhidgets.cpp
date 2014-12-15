@@ -324,7 +324,7 @@ int CCONV ofxPhidgetsRFID::TagHandler(CPhidgetRFIDHandle RFID, void *usrptr, cha
 	//turn on the Onboard LED
 	CPhidgetRFID_setLEDOn(RFID, 1);
 	//ofApp * app = static_cast <ofApp *>(usrptr);
-	app->newTag();
+	//app->newTag();
 	//ofApp *obj = (ofxPhidgetsRFID *)usrptr;
 	//obj->setTag(RFID, TagVal);
 
