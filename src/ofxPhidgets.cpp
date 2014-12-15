@@ -316,3 +316,291 @@ void ofxPhidgetsIfkit::exit()
 	CPhidget_close((CPhidgetHandle)ifKit);
 	CPhidget_delete((CPhidgetHandle)ifKit);
 }
+
+
+
+int CCONV ofxPhidgetsRFID::TagHandler(CPhidgetRFIDHandle RFID, void *usrptr, char *TagVal, CPhidgetRFID_Protocol proto)
+{
+	//turn on the Onboard LED
+	CPhidgetRFID_setLEDOn(RFID, 1);
+	//ofApp * app = static_cast <ofApp *>(usrptr);
+	app->newTag();
+	//ofApp *obj = (ofxPhidgetsRFID *)usrptr;
+	//obj->setTag(RFID, TagVal);
+
+	//ofApp * app = static_cast <testApp *>(userRefCon);  
+	//ok// obj->currentTagValue = TagVal
+
+	//newTagRead = true;
+	//currentTagValue = *TagVal;
+	printf("Tag Read: %s \n", TagVal);//, currentTagValue);
+	
+	//RFIDcurrentTagValue = TagVal;
+	//setTag(RFID, TagVal);
+	return 0;
+}
+
+void ofxPhidgetsRFID::setOfAppPtr(void *usrPtr){
+	ofAppPtr = usrPtr;
+}
+
+void ofxPhidgetsRFID::setTag(CPhidgetRFIDHandle RFID, char* Tag){
+	//currentTagValue = Tag;
+	//currentTagValue = 0;
+	cout << "\nTag: " <<Tag;
+	//currentTagValue = *Tag;
+	//CPhidgetRFID
+}
+
+char* ofxPhidgetsRFID::LastTag(){
+	char* tag ;
+	//CPhidgetRFID_Protocol* proto = 0;
+
+	//CPhidgetRFID_getLastTag2(currRFID, &tag,  proto );
+	return tag;
+}
+
+bool ofxPhidgetsRFID::TagStatus(){
+	int* status = 0;
+	CPhidgetRFID_getTagStatus(currRFID, status);
+	//cout << "\n\tstatus: " << status;
+	//return status == 0 ? false : true;
+	return status;
+}
+
+int CCONV ofxPhidgetsRFID::TagLostHandler(CPhidgetRFIDHandle RFID, void *usrptr, char *TagVal, CPhidgetRFID_Protocol proto)
+{
+	//turn off the Onboard LED
+	CPhidgetRFID_setLEDOn(RFID, 0);
+	//CPhidgetRFID_getLastTag2(RFID, currentTagValue, proto);
+	
+	printf("Tag Lost: %s\n", TagVal);
+	return 0;
+}
+
+
+void ofxPhidgetsRFID::init() {
+	
+	int result;
+	const char *err;
+
+	currentTagValue = 0;
+
+	//init newTagRead - no Tags at beginning
+	//newTagRead = false;
+
+	//Declare an RFID handle
+	CPhidgetRFIDHandle rfid = 0;
+
+	//create the RFID object
+	CPhidgetRFID_create(&rfid);
+
+	//Set the handlers to be run when the device is plugged in or opened from software, unplugged or closed from software, or generates an error.
+	CPhidget_set_OnAttach_Handler((CPhidgetHandle)rfid, AttachHandler, ofAppPtr);
+	CPhidget_set_OnDetach_Handler((CPhidgetHandle)rfid, DetachHandler, ofAppPtr);
+	CPhidget_set_OnError_Handler((CPhidgetHandle)rfid, ErrorHandler, ofAppPtr);
+
+	//Registers a callback that will run if an output changes.
+	//Requires the handle for the Phidget, the function that will be called, and an arbitrary pointer that will be supplied to the callback function (may be NULL).
+	CPhidgetRFID_set_OnOutputChange_Handler(rfid, OutputChangeHandler, ofAppPtr);
+
+	//Registers a callback that will run when a Tag is read.
+	//Requires the handle for the PhidgetRFID, the function that will be called, and an arbitrary pointer that will be supplied to the callback function (may be NULL).
+	CPhidgetRFID_set_OnTag2_Handler(rfid, TagHandler, ofAppPtr);
+
+	//Registers a callback that will run when a Tag is lost (removed from antenna read range).
+	//Requires the handle for the PhidgetRFID, the function that will be called, and an arbitrary pointer that will be supplied to the callback function (may be NULL).
+	CPhidgetRFID_set_OnTagLost2_Handler(rfid, TagLostHandler, ofAppPtr);
+
+	//open the RFID for device connections
+	CPhidget_open((CPhidgetHandle)rfid, -1);
+	
+	//get the program to wait for an RFID device to be attached
+	printf("\n1 - Waiting for RFID to be attached....\n");
+	if((result = CPhidget_waitForAttachment((CPhidgetHandle)rfid, 100000)))
+	{
+		CPhidget_getErrorDescription(result, &err);
+		printf("\n2 - Problem waiting for attachment:  %s\n", err);
+		//return 0;
+	}
+	
+	//Display the properties of the attached RFID device
+	display_properties(rfid);
+
+	CPhidgetRFID_setAntennaOn(rfid, 1);
+
+	//read RFID event data
+	printf("\n3 - Reading.....\n");
+
+	currRFID = rfid;
+
+	initialized = true;
+}
+
+void ofxPhidgetsRFID::update(){
+
+	cout << "\ncurrentTagValue: " << currentTagValue;
+	//newTagRead =
+
+//	if(newTagRead){
+		
+	//}
+
+	//CPhidgetR
+	//CPhidgetRFID_getOutputState(rFID);
+	//CPhidgetR
+}
+
+void ofxPhidgetsRFID::exit() {
+	if(!initialized) return;
+	printf("\nClosing RFID...\n");
+	//CPhidget_close((CPhidgetHandle)rFID);
+	//CPhidget_delete((CPhidgetHandle)rFID);
+}
+
+int ofxPhidgetsRFID:: display_properties(CPhidgetRFIDHandle phid)
+{
+	int serialNo, version, numOutputs, antennaOn, LEDOn;
+	const char* ptr;
+
+	CPhidget_getDeviceType((CPhidgetHandle)phid, &ptr);
+	CPhidget_getSerialNumber((CPhidgetHandle)phid, &serialNo);
+	CPhidget_getDeviceVersion((CPhidgetHandle)phid, &version);
+
+	CPhidgetRFID_getOutputCount (phid, &numOutputs);
+	CPhidgetRFID_getAntennaOn (phid, &antennaOn);
+	CPhidgetRFID_getLEDOn (phid, &LEDOn);
+
+
+	printf("%s\n", ptr);
+	printf("Serial Number: %10d\nVersion: %8d\n", serialNo, version);
+	printf("# Outputs: %d\n\n", numOutputs);
+	printf("Antenna Status: %d\nOnboard LED Status: %d\n", antennaOn, LEDOn);
+	return 0;
+}
+
+
+void ofxPhidgetsManager::init(){
+	initialized = false;
+	//init manager
+	manager = 0;
+	//init numDevices
+	numDevices = 0;
+	//CPhidget_enableLogging(PHIDGET_LOG_VERBOSE, NULL);
+	//create the Manager object
+	CPhidgetManager_create(&manager);
+
+	//Set the handlers to be run when the device is plugged in or opened from software, unplugged or closed from software, or generates an error.
+	CPhidgetManager_set_OnAttach_Handler(manager, ofxPhidgetsManager::AttachHandler, manager);
+	CPhidgetManager_set_OnDetach_Handler(manager, ofxPhidgetsManager::DetachHandler, manager);
+	CPhidgetManager_set_OnError_Handler(manager, ofxPhidgetsManager::ErrorHandler, NULL);
+
+	//open the Manager for device connections
+	CPhidgetManager_open(manager);
+
+	initialized = true;
+}
+
+bool ofxPhidgetsManager::isInitialized(){
+	return initialized;
+}
+
+void ofxPhidgetsManager::update(){
+	//display_devices(manager);
+	
+}
+
+
+void ofxPhidgetsManager::exit(){
+	//since user input has been read, this is a signal to terminate the program so we will close the phidget and delete the object we created
+	printf("Closing manager...\n");
+	//CPhidgetManager_close(manager);
+	//CPhidgetManager_delete(manager);
+}
+
+
+
+int CCONV ofxPhidgetsManager::AttachHandler(CPhidgetHandle phid, void *userPtr){
+	int serialNo;
+	const char *name;
+	CPhidget_DeviceID id;
+	CPhidget_DeviceClass cls;
+
+	CPhidget_getDeviceName (phid, &name);
+	CPhidget_getSerialNumber(phid, &serialNo);
+	CPhidget_getDeviceClass(phid, &cls);
+	CPhidget_getDeviceID(phid, &id);
+
+	printf("%s %10d attached! (%d, %d) \n", name, serialNo, cls, id);
+
+	//display_devices((CPhidgetManagerHandle)userPtr);
+	
+
+	return 0;
+}
+
+int CCONV ofxPhidgetsManager::DetachHandler(CPhidgetHandle MAN, void *userptr){
+
+	int serialNo;
+	const char *name;
+
+	CPhidget_getDeviceName (MAN, &name);
+	CPhidget_getSerialNumber(MAN, &serialNo);
+	printf("%s %10d detached!\n", name, serialNo);
+
+	//ofxPhidgetsManager::display_devices((CPhidgetManagerHandle)userptr);
+
+	return 0;
+}
+
+int CCONV ofxPhidgetsManager::ErrorHandler(CPhidgetManagerHandle MAN, void *userptr, int ErrorCode, const char *unknown){
+	return 0;
+}
+
+CPhidgetHandle* ofxPhidgetsManager::getDevices(){
+	int serialNo, version, i;
+	const char* ptr;
+	CPhidgetHandle *devices;
+
+	CPhidgetManager_getAttachedDevices (manager, &devices, &numDevices);
+	
+	return devices;
+}
+
+int ofxPhidgetsManager::getDevicesNumber(){
+	int serialNo, version, i;
+	const char* ptr;
+	CPhidgetHandle *devices;
+
+	CPhidgetManager_getAttachedDevices (manager, &devices, &numDevices);
+
+	return numDevices;
+}
+
+
+int ofxPhidgetsManager::display_devices(CPhidgetManagerHandle MAN)
+{
+	int serialNo, version, numDevices, i;
+	const char* ptr;
+	CPhidgetHandle *devices;
+
+	CPhidgetManager_getAttachedDevices (MAN, &devices, &numDevices);
+
+	printf("|-   # -|-              Type              -|- Serial No. -|-  Version -|\n");
+	printf("|-------|----------------------------------|--------------|------------|\n");
+
+
+	for(i = 0; i < numDevices; i++)
+	{
+		CPhidget_getDeviceType(devices[i], &ptr);
+		CPhidget_getSerialNumber(devices[i], &serialNo);
+		CPhidget_getDeviceVersion(devices[i], &version);
+
+		printf("|- %3d -|- %30s -|- %10d -|- %8d -|\n", i, ptr, serialNo, version);
+		printf("|-------|----------------------------------|--------------|------------|\n");
+	}
+
+	//CPhidgetManager_freeAttachedDevicesArray(devices);
+
+	return 0;
+}
