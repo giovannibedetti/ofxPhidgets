@@ -10,7 +10,7 @@ In Build Settings -> Search Paths -> Header Search Paths, add `/Library/Framewor
 
 In General -> Linked Frameworks and Libraries, add `/Library/Frameworks/Phidget21.framework`
 
-
+<br>
 WINDOWS - Visual Studio 2012
 
 Project Properties -> Configuration Properties -> Linker -> Input -> Additional Dependencies -> Edit -> Add C:\Program Files\Phidgets\x86\phidget21.lib
