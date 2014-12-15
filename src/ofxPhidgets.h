@@ -74,3 +74,60 @@ private:
 	//Declare an InterfaceKit handle
 	CPhidgetInterfaceKitHandle ifKit = 0;
 };
+
+
+class ofxPhidgetsManager : public ofxPhidgets {
+public:
+	void init();
+	void update();
+	void exit();
+	CPhidgetHandle* getDevices();
+	bool isInitialized();
+
+	int getDevicesNumber();
+	~ofxPhidgetsManager() { exit(); };
+
+private:
+	 
+	 static int CCONV AttachHandler(CPhidgetHandle MAN, void *userptr);
+	 static int CCONV DetachHandler(CPhidgetHandle MAN, void *userptr);
+	 static int CCONV ErrorHandler(CPhidgetManagerHandle MAN, void *userptr, int ErrorCode, const char *unknown);
+	int display_devices(CPhidgetManagerHandle MAN);
+	 int numDevices;
+	 CPhidgetHandle* devices;
+	 CPhidgetManagerHandle manager;
+};
+
+class ofxPhidgetsRFID : public ofxPhidgets {
+
+public:
+	void init();
+	void update();
+	void exit();
+
+	char* LastTag();
+	bool  TagStatus();
+	void setOfAppPtr(void *usrPtr);
+
+	~ofxPhidgetsRFID() { exit(); };
+
+
+private:
+	int display_properties(CPhidgetRFIDHandle phid);
+	static int CCONV TagHandler(CPhidgetRFIDHandle RFID, void *usrptr, char *TagVal, CPhidgetRFID_Protocol proto);
+	static int CCONV TagLostHandler(CPhidgetRFIDHandle RFID, void *usrptr, char *TagVal, CPhidgetRFID_Protocol proto);
+
+	 void setTag(CPhidgetRFIDHandle RFID, char* Tag);
+
+	
+
+	//int result, i;
+	const char *err;
+	//is true when we handle a new tag
+	 bool newTagRead;
+	 char* currentTagValue;
+	 //void *ofAppPtr;
+	CPhidgetRFIDHandle currRFID;
+
+	
+};
